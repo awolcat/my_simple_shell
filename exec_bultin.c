@@ -4,18 +4,18 @@
  * exec_builtin - executes a builtin command via a syscall
  * @tok: user input
  * @env: environment
- * @filename: full pathname of file/command
  * @argv: an array of pointers to strings
  *
  * Description: execute function associated with user command
  * Return: void
  */
-int exec_builtin(char **tok, char **env, char *filename, char *argv[])
+int exec_builtin(char **tok, char **env, char *argv[])
 {
 	int i, retval; /*pid, status;*/
 	get_func inbuilt[] = {
 		{"exit", our_exit},
 		{"env", print_env},
+		{"cd", change_dir},
 		{NULL, NULL}
 	};
 
@@ -23,7 +23,6 @@ int exec_builtin(char **tok, char **env, char *filename, char *argv[])
 	{
 		if ((stringcomp(inbuilt[i].cmd, tok[0])) == 0)
 		{
-			free(filename);
 			retval = (*inbuilt[i].func)(tok, env, argv);
 			return (retval);
 		}
@@ -41,19 +40,11 @@ int exec_builtin(char **tok, char **env, char *filename, char *argv[])
  */
 int our_exit(char **tok, __attribute__((unused))char **env, char *argv[])
 {
-	int len = 0, i = 0, sig_fig = 1, num = 0, j = 0, err = 0;
+	int len = 0, i = 0, sig_fig = 1, num = 0, j = 0;
 
 	while (tok[j])
 		j++;
-
-	err = errno;
-	if (!tok[j] && j == 0)
-	{
-		errno = 0;
-		free_grid(tok, j);
-		exit(err);
-	}
-
+	/* Convert string to int */
 	if (tok[1])
 	{
 		while (tok[1][i])
@@ -114,6 +105,44 @@ int print_env(__attribute__((unused))char **tok, char **env,
  *
  * Return: void
  */
+int change_dir(char **tok, char **env, char **argv)
+{
+	char path[100];
+	int ret = -1;
+	DIR *current;
+	struct dirent *directory;
+	
+	current = opendir(getcwd(path, 100));
+	directory = readdir(current);
+
+	if (tok && tok[1])
+	{
+		while (directory)
+		{
+			if (strcmp(directory->d_name, tok[1]) == 0)
+			{
+				ret = chdir(tok[1]);
+				break;
+			}
+			directory = readdir(current);
+		}
+		if (ret == -1)
+		{
+			fprintf(stdout, "%s: cd: %s:", argv[0], tok[1]);
+			fprintf(stdout, " No such file or directory\n");
+			ret = 0;
+		}                  
+	}
+	else if (tok && !tok[1])
+	{
+		ret = chdir("/home");
+	}
+
+	(void)env;
+	(void)argv;
+	closedir(current);
+	return (ret);
+}
 
 void illegal_num_error(char **tok, char *argv[])
 {

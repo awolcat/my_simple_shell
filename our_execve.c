@@ -8,9 +8,8 @@
  * Description: give correct args to execve
  * Return: nothing
  */
-int our_execve(char *tokens[], char *environ[], char *fn)
+int our_execve(char *tokens[], char *environ[])
 {
-	tokens[0] = fn;
 	execve(tokens[0], tokens, environ);
 
 	return (-1);

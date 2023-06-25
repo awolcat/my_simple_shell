@@ -11,9 +11,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <dirent.h>
+
 
 int get_prompt(void);
-void getline_error_handler(char *, int);
 char **word_split(char *str, char *delim);
 int no_of_args(char *str, char *delim);
 void free_grid(char **grid, int height);
@@ -25,11 +26,12 @@ char *_strconcat(char *str1, char *str2);
 char **waymaker(int *i, char **env);
 char **abs_path(char *token[], char **env);
 int file_check(char *tokens[], char **env);
-int exec_builtin(char **, char **, char *, char **);
+int exec_builtin(char **, char **, char **);
 int our_exit(char **tok, char **env, char **);
 int print_env(char **, char **env, char **);
 int stringcomp(char *, char *);
-int our_execve(char *tokens[], char *environ[], char *fn);
+int our_execve(char *tokens[], char *environ[]);
+int change_dir(char **tok, char **env, char **argv);
 /**
  * struct get_inbuilt - holds a string and a function pointer
  * @cmd: command
@@ -40,8 +42,9 @@ typedef struct get_inbuilt
 	char *cmd;
 	int (*func)(char **tokens, char **env, char **);
 } get_func;
+
 void cmd_not_found_error(char *argv, char *token);
-int _fork(char **tokens, char **env, char **argv, char *filename);
+int _fork(char **tokens, char **env, char **argv);
 char arg_count(int);
 void illegal_num_error(char **tok, char **argv);
 
