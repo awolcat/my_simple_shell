@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 
-git clone https://github.com/awolcat/my_simple_shell
-
 if [ -e my_simple_shell ]; then
 	gcc -Wall -Werror -Wextra -std=gnu89 -pedantic -o hsh my_simple_shell/*.c
 	rm my_simple_shell/*.c my_simple_shell/main.h
