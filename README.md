@@ -20,4 +20,4 @@ hsh
 	* cd DIRECTORY
 	* pwd
 2. External
-	Refer to external bash commands
+	* Refer to external bash commands
