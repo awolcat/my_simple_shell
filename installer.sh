@@ -9,6 +9,6 @@ if [ -e my_simple_shell ]; then
 	rm hsh
 	echo "Install Success!"	
 else
-	echo "Something went wrong"
-	echo "Check that you are connected to the internet"
+	echo "Error :("
+	echo "Ensure you cloned my_simple_shell and try again."
 fi
